@@ -1,0 +1,33 @@
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - job: windowsBuild
+    displayName: Windows Build
+    pool:
+      vmImage: windows-2019
+    steps:
+    - task: UsePythonVersion@0
+      displayName: 'Set Python Version'
+      inputs:
+        versionSpec: '3.7'
+        addToPath: true
+        architecture: 'x64'
+    - script: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip install Cython --install-option="--no-cython-compile"
+      displayName: 'Install Cython'
+    - script: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
+        python setup.py build --export
+      env:
+        DISTUTILS_USE_SDK: 1
+        PY_VCRUNTIME_REDIST: No
+      displayName: Build Windows
+    - task: CopyFiles@2
+      inputs:
+        contents: 'animation_nodes*.zip'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    - publish: $(Build.ArtifactStagingDirectory)
+      artifact: windowsBuild
+
