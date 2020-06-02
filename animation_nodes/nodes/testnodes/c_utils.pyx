@@ -1,7 +1,6 @@
 import cython
 from libc.math cimport sqrt
 from .. matrix.c_utils import* 
-from libc.math cimport M_PI as PI
 from ... math cimport abs as absNumber
 from mathutils import Matrix, Euler, Vector
 from ... math import matrix4x4ListToEulerList
@@ -21,7 +20,7 @@ from ... math cimport (
     add, subtract, multiply, divide_Save, modulo_Save,
     sin, cos, tan, asin_Save, acos_Save, atan, atan2, hypot,
     power_Save, floor, ceil, sqrt_Save, invert, reciprocal_Save,
-    snap_Save, copySign, floorDivision_Save, logarithm_Save,clamp,
+    snap_Save, copySign, floorDivision_Save, logarithm_Save,
     Vector3, Euler3, Matrix4, toMatrix4,toVector3,multMatrix4, toPyMatrix4,
     invertOrthogonalTransformation,setTranslationRotationScaleMatrix,
     setRotationXMatrix, setRotationYMatrix, setRotationZMatrix,
