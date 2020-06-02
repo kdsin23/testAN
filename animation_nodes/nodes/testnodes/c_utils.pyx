@@ -1,12 +1,14 @@
 import cython
 from libc.math cimport sqrt
 from .. matrix.c_utils import* 
+from libc.math cimport M_PI as PI
+from ... utils.limits cimport INT_MAX
 from ... math cimport abs as absNumber
 from mathutils import Matrix, Euler, Vector
 from ... math import matrix4x4ListToEulerList
-from ... libs.FastNoiseSIMD.wrapper import PyNoise
+#from ... libs.FastNoiseSIMD.wrapper import PyNoise
 from ... algorithms.lists.random import generateRandomVectors
-from ... algorithms.random import uniformRandomDoubleWithTwoSeeds, getRandom3DVector
+from ... algorithms.random import uniformRandomDoubleWithTwoSeeds, getRandom3DVector, getUniformRandom
 from ... nodes.number.c_utils import range_DoubleList_StartStop, mapRange_DoubleList_Interpolated 
 from ... data_structures cimport (
     DoubleList, FloatList,VirtualMatrix4x4List,
@@ -20,17 +22,13 @@ from ... math cimport (
     add, subtract, multiply, divide_Save, modulo_Save,
     sin, cos, tan, asin_Save, acos_Save, atan, atan2, hypot,
     power_Save, floor, ceil, sqrt_Save, invert, reciprocal_Save,
-    snap_Save, copySign, floorDivision_Save, logarithm_Save,
+    snap_Save, copySign, floorDivision_Save, logarithm_Save,clamp,
     Vector3, Euler3, Matrix4, toMatrix4,toVector3,multMatrix4, toPyMatrix4,
     invertOrthogonalTransformation,setTranslationRotationScaleMatrix,
     setRotationXMatrix, setRotationYMatrix, setRotationZMatrix,
     setRotationMatrix, setTranslationMatrix, setIdentityMatrix,
     setScaleMatrix,setMatrixTranslation,transposeMatrix_Inplace
 )
-from ... algorithms.lists.random import generateRandomVectors
-from ... utils.limits cimport INT_MAX
-from ... algorithms.random import getUniformRandom
-
 
 def VectorsToColors(Vector3DList vectors):
     cdef Py_ssize_t count = vectors.getLength()
@@ -103,9 +101,6 @@ def TimeEffector(Matrix4x4List matrices, Vector3DList v, EulerList e, Vector3DLi
     cdef Vector3DList sA = extractMatrixScales(matrices)
     cdef int count = matrices.getLength()
     cdef Py_ssize_t i
-
-    #cdef DoubleList strengths = range_DoubleList_StartStop(count, 0.00, 1.00)
-    #cdef DoubleList interpolatedStrengths = mapRange_DoubleList_Interpolated(strengths, interpolation, 0, 1, 0, 1)
 
     cdef VirtualVector3DList translations_out = VirtualVector3DList.create(tA, (0, 0, 0))
     cdef VirtualEulerList rotations_out = VirtualEulerList.create(rA, (0, 0, 0))
@@ -191,11 +186,3 @@ def SplineEffector(Matrix4x4List matrices, Vector3DList v, EulerList e, Vector3D
         scales_out.get(i).z = sA.data[i].z + influences.data[i] * s.data[0].z
 
     return composeMatrices(count, translations_out, rotations_out, scales_out)
-
-    
-
-
-
-
-
-
